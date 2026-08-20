@@ -15,7 +15,7 @@ The goal is to deploy the application's infrastructure on AWS EKS using Terrafor
 - [x] Settings updated to connect to MySQL (AWS RDS ready).
 - [x] `requirements.txt` generated with all dependencies (`django-storages`, `boto3`, `mysqlclient`, etc.).
 - [x] `Dockerfile` and `docker-compose.yml` created for local development and containerization.
-- [ ] Terraform code for infrastructure (EKS, RDS, S3).
+- [x] Terraform code for infrastructure (EKS, RDS, S3).
 - [ ] Helm Chart for deploying the application.
 
 ## Prerequisites
@@ -62,3 +62,54 @@ The application relies on the following environment variables for configuration:
 - `AWS_SECRET_ACCESS_KEY`: Your AWS secret key
 - `AWS_STORAGE_BUCKET_NAME`: Name of your S3 bucket
 - `AWS_S3_REGION_NAME`: AWS region of the bucket (default: `us-east-1`)
+
+## Infrastructure Deployment (Terraform)
+
+The `terraform/` directory contains all the Infrastructure as Code (IaC) to provision the required resources on AWS.
+
+### Resources Provisioned:
+- **VPC**: A dedicated VPC with 2 public and 2 private subnets across 2 Availability Zones, including a NAT Gateway.
+- **EKS Cluster**: An Amazon EKS cluster (v1.35) with a managed node group consisting of `t3.medium` instances.
+- **RDS MySQL**: A secure MySQL 8.0 instance (`db.t3.micro`) inside the private subnets.
+- **S3 Bucket**: A private bucket for storing media and static files, uniquely named with a random suffix.
+- **IRSA (IAM Roles for Service Accounts)**: Configures a Kubernetes Service Account (`book-store-sa`) with permissions to access the S3 bucket securely, eliminating the need to pass AWS access keys to the application pods.
+
+### How to Deploy
+
+Ensure you have [Terraform](https://developer.hashicorp.com/terraform/downloads) installed and your AWS CLI is authenticated with sufficient permissions.
+
+1. **Navigate to the Terraform directory:**
+   ```bash
+   cd terraform
+   ```
+
+2. **Initialize Terraform:**
+   This will download the necessary AWS and Kubernetes provider plugins and modules.
+   ```bash
+   terraform init
+   ```
+
+3. **Plan the Deployment:**
+   Review the resources that Terraform will create.
+   ```bash
+   terraform plan
+   ```
+
+4. **Apply the Changes:**
+   Execute the deployment. This process will take around 15-20 minutes, primarily for the EKS cluster and RDS instance to spin up.
+   ```bash
+   terraform apply
+   ```
+   *Type `yes` when prompted to confirm.*
+
+5. **Retrieve Outputs:**
+   Once completed, Terraform will output essential information required for the next steps (like the database endpoint, generated password, and S3 bucket name). You can always retrieve these values by running:
+   ```bash
+   terraform output
+   ```
+
+6. **Connect to the EKS Cluster:**
+   Update your local `kubeconfig` to interact with your new cluster using `kubectl`:
+   ```bash
+   aws eks update-kubeconfig --region us-east-1 --name book-bazaar-cluster
+   ```
