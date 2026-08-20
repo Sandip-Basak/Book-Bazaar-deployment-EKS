@@ -1,0 +1,57 @@
+# Django / Python
+*.pyc
+__pycache__/
+celerybeat-schedule
+db.sqlite3
+development.sqlite3
+dist/
+downloads/
+eggs/
+eggs-base/
+htmlcov/
+instance/
+local_settings.py
+media/
+nosetests.xml
+pip-delete-this-directory.txt
+pip-log.txt
+sdist/
+static_root/
+staticfiles/
+var/
+vark/
+venv/
+.env
+.eggs/
+.envrc
+.hypothesis/
+.installed.cfg
+.pytest_cache/
+.python-version
+.spyderproject
+.spyder-py3
+.tox/
+.webassets-cache
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Helm
+charts/
+*.tgz
+.helm/
+
+# Operating Systems
+.DS_Store
+Thumbs.db

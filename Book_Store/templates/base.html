@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<title>{% block title %}{% endblock title %}</title>
+<style>
+  body{
+    font-family: Georgia, serif;
+  }
+    html, body {
+      height: 100%;
+  }
+  body {
+      display: flex;
+      flex-direction: column;
+  }
+  .container-fluid {
+      flex: 1;
+  }
+</style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Fifth navbar example">
+        <div class="container-fluid">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAeBJREFUSEuNVu1hQjEI5DKJHcVJWifRTdpR3KROEmoCPCAf2vdHHyaBO7iLABExtce/9dfx2f3c4/pj/pBTXyZ4uTlmXJysBYYEEuHKVwLfBFF4GkwLxe+6pIeYHgS6ALgLIdAt+sJcv4noS0jzBNN5GvB4WvEA8GGlJQSV+RdMJwKfgXI/FgWal/0xFMy9nUA/theZeOBjQUFHccDksY+6mXVAlN6YILTlKGpK0CrXTa/6gVIAYqpTgoQAxFwPiDZAXFts1Y9WvRwACGIphvXdSAoS6AvacUUpivqIkzhNZUtkCGKCbQ+0SZO4ciDKREe8gQpNNuy6r3EokG0KbBJyM9N0BZRPDfUEBYC4w6AmpygiWCh2M6v7Hmiu2GQ/Q/gd7MbrDvl9Cp0BGQ9dFBdEj+oJYtUj+VuhJbOjPseNPDQSD5fdaTeP1aSDpOQFgkiRGXpOFamTA/YUabbKtVO9fBYO6uuy1XbhGcBIhduCq7RXNpqWcS4WPTl7HPPRTQ3BOXu6T9GEbpriLHNJ4EIzu74A5cfc1HuwUPKb6QqUd7O7PtffxirfXzhD++N9EBEw84mIPp8V35z3RQ+mGy0mYCooahXDlTldMsFPktD+HYf+q3ivquN222nCi8tN+QOSQy4xsoQjFwAAAABJRU5ErkJggg=="/>
+          <a class="navbar-brand mx-1" href="/">BookBazaar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+    
+          <div class="collapse navbar-collapse" id="navbarsExample05">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/store">Store</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/store/best-sellers">Best Seller</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/store/latest-books">New Releases</a>
+              </li>
+            </ul>
+            <a href="/profile" class="d-block link-body-emphasis text-decoration-none d-flex text-white" aria-expanded="false">
+              {% if request.user.is_anonymous %}
+              <img class="rounded-2 border border-2 border-white mx-1" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAitJREFUSEuNVYGR4yAQk6jkrpOkkr9UEqcSu5NzJ0kl7FuA7QVs/zPjGQYDu6uVBOEGAZhfuJwThMHSoTIv+8tSukzzg+EPH/7+70zYZV0W/Ho0+6JhBHED8Cnfi+ScUiyZ5mrqhE4C7DvN7MeAMZeq01vRCjQx8HWFqwvQhzczZfybrjUMuszMvgD8WcINBnwIPFIlGh5814+mpr1pMdoI2s9yciD58htVGYARhpmB9/1f0/Ar5pjZG1DG/CYpSLahSgx4U1WQ32f3ZEC7xuYs4kGApvm2QIcFuuqelvqevVuw1FKzXwC3pQdD6CCKT0GXGk0+ziRT6WDPLs9KQ9+lmRMZXmZxa3Ih1p0hzJ6f/h4XoMZp3WRmT1VwpEgDHoGcVLZX9S4M4JKma9mlkhEQbVOz9WWhlSamAC34rVUcq/rMNjwdz7nout9rXvAoawNvBxB9Sm/mViNedD1NCVhMCh4Xhqihnv2Z094x8lzB1I9568cGndNBoqYuJ0RPDWG9W8EaKichockEn8UEFfjOwNkD1gkkqxc6PIXC7/aAd03vTUpIqq5to5Z/9hdAuDp/OZNRXi+2Ice9LWUMQXpx8t1ORzNtUhDBMq0Wcn19xjhaFBEE7RzIew4gptUVJHgAVOZ2ZYjr8fQoATLHDxk2mNoAKfBCuxML+SdUzfm1gu6hOLaN1nYP3pcug9M3uWbCuQ0cvsPb01xVcFB+SXH3mdo2Ovo65qws+gsr8y0vHdNirQAAAABJRU5ErkJggg=="/>
+                {% else %}
+                <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle-split show" data-bs-toggle="dropdown" aria-expanded="true">
+                  <img src="{{ user_data.profile_photo.url }}" alt="mdo" width="35" height="35" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small shadow show" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 34px);" data-popper-placement="bottom-end">
+                  <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                  <li><a class="dropdown-item" href="/profile/orders">Orders</a></li>
+                  <li><a class="dropdown-item" href="/profile/cart">Cart</a></li>
+                  <li><a class="dropdown-item" href="/profile/wishlist">Wishlist</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/profile/signout">Sign out</a></li>
+                </ul>
+                {% endif %}
+            </a>
+          </div>
+        </div>
+      </nav>
+
+
+      {% block body %}{% endblock body %}
+
+
+
+      <footer class="mt-auto d-flex flex-wrap justify-content-between align-items-center border-top bg-dark text-white">
+        <div class="col-md-4 d-flex align-items-center p-2">
+            <h6 class="mb-3 mb-md-0">Created by Sandip Basak</h6>
+        </div>
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+            <li class="ms-0">
+                <a class="text-body-secondary" href="https://www.facebook.com/sandip.basak.716" target="_blank">
+                    <button class="btn" type="button">
+                        <i class="fab fa-facebook-square fa-2x text-white"></i>
+                    </button>
+                </a>
+            </li>
+            <li class="ms-0">
+                <a class="text-body-secondary" href="https://www.instagram.com/sandip__basak" target="_blank">
+                    <button class="btn" type="button">
+                        <i class="fab fa-instagram-square fa-2x text-white"></i>
+                    </button>
+                </a>
+            </li>
+            <li class="ms-0">
+                <a class="text-body-secondary" href="https://github.com/Sandip-Basak" target="_blank">
+                    <button class="btn" type="button">
+                        <i class="fab fa-github-square fa-2x text-white"></i>
+                    </button>
+                </a>
+            </li>
+            <li class="ms-0">
+                <a class="text-body-secondary" href="mailto:sandipisbrave@gmail.com">
+                    <button class="btn" type="button">
+                        <i class="fas fa-envelope-square fa-2x text-white"></i>
+                    </button>
+                </a>
+            </li>
+        </ul>
+    </footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+</body>
+</html>

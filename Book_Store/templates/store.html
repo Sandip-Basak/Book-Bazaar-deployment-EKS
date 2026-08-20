@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Store{% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <h1 class="text-center">{{ name }}</h1>
+    <div class="d-flex flex-column">
+
+        <hr>
+        {% for b in books %}
+        
+        <div class="container" onclick="book({{ b.bid }})">
+            <div class="row">
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 h-100">
+                    <img src="{{ b.image.url }}" alt="" class="w-100">
+                </div>
+                <div class="col-xl-10 col-lg-9 col-md-8 col-sm-7 h-100">
+                    <figure>
+                        <blockquote class="blockquote">
+                            <p>{{ b.name }}</p>
+                        </blockquote>
+                        <figcaption class="blockquote-footer">
+                            Written by <cite title="Source Title">{{ b.author }}</cite>
+                        </figcaption>
+                    </figure>
+                    <p class="d-none d-sm-block">{{ b.summary }}</p>
+                    <p>Rs.{{ b.price }}/-</p>
+                </div>
+            </div>
+        </div>
+        <hr>
+
+        {% endfor %} 
+    </div>
+</div>
+
+<script>
+    function book(id){
+      location.assign('/book/'+id)
+    }
+  </script>
+
+
+
+{% endblock body %}

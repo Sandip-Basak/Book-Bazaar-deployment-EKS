@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Wishlist{% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <h1 class="text-center">Your Wishlist</h1>
+    <div class="d-flex flex-column">
+
+        <hr>
+        {% for w in wishlist %}
+        
+        <div class="container" onclick="book({{ w.book.bid }})">
+            <div class="row">
+                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-5 h-100">
+                    <img src="{{ w.book.image.url }}" alt="" class="w-100">
+                </div>
+                <div class="col-xl-10 col-lg-9 col-md-8 col-sm-7 h-100">
+                    <figure>
+                        <blockquote class="blockquote">
+                            <p>{{ w.book.name }}</p>
+                        </blockquote>
+                        <figcaption class="blockquote-footer">
+                            Written by <cite title="Source Title">{{ w.book.author }}</cite>
+                        </figcaption>
+                    </figure>
+                    <p>Rs.{{ w.book.price }}/-</p>
+                    <a href="/wishlist/remove/{{ w.book.bid }}" class="btn btn-danger">Remove</a>
+                    <a href="/cart/add/{{ w.book.bid }}" class="btn btn-success">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+        <hr> 
+
+        {% endfor %} 
+    </div>
+</div>
+
+<script>
+    function book(id){
+      location.assign('/book/'+id)
+    }
+  </script>
+
+{% endblock body %}
