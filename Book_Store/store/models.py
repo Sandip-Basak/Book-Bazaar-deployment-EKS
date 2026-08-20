@@ -7,7 +7,7 @@ import uuid
 def book_image(instance, filename):
     extension = filename.split('.')[-1]  # Get file extension
     unique_filename = f"{uuid.uuid4().hex}.{extension}"
-    return f"static/images/book/{unique_filename}"
+    return f"images/book/{unique_filename}"
 
 # Create your models here.
 class Book(models.Model):
