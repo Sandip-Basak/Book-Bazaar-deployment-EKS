@@ -33,3 +33,8 @@ output "irsa_role_arn" {
   description = "IAM Role ARN for the EKS Service Account"
   value       = module.iam_eks_role.iam_role_arn
 }
+
+output "cloudfront_domain_name" {
+  description = "Domain name of the CloudFront distribution"
+  value       = aws_cloudfront_distribution.s3_distribution.domain_name
+}

@@ -62,6 +62,7 @@ The application relies on the following environment variables for configuration:
 - `AWS_SECRET_ACCESS_KEY`: Your AWS secret key
 - `AWS_STORAGE_BUCKET_NAME`: Name of your S3 bucket
 - `AWS_S3_REGION_NAME`: AWS region of the bucket (default: `us-east-1`)
+- `CLOUDFRONT_DOMAIN`: (Optional) The CloudFront distribution domain name (e.g., `d1234abcd.cloudfront.net`). If provided, media and static files will be served via the CDN globally.
 
 ## Infrastructure Deployment (Terraform)
 
