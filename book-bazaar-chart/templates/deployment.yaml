@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "book-bazaar.fullname" . }}
+  labels:
+    {{- include "book-bazaar.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "book-bazaar.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "book-bazaar.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: dbName
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: dbUser
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: dbPassword
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: dbHost
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: dbPort
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: awsStorageBucketName
+            - name: AWS_S3_REGION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: awsRegion
+            - name: CLOUDFRONT_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "book-bazaar.fullname" . }}-secret
+                  key: cloudfrontDomain
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

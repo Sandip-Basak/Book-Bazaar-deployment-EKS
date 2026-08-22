@@ -16,7 +16,7 @@ The goal is to deploy the application's infrastructure on AWS EKS using Terrafor
 - [x] `requirements.txt` generated with all dependencies (`django-storages`, `boto3`, `mysqlclient`, etc.).
 - [x] `Dockerfile` and `docker-compose.yml` created for local development and containerization.
 - [x] Terraform code for infrastructure (EKS, RDS, S3).
-- [ ] Helm Chart for deploying the application.
+- [x] Helm Chart for deploying the application.
 
 ## Prerequisites
 - Docker and Docker Compose (for local testing)
@@ -113,4 +113,62 @@ Ensure you have [Terraform](https://developer.hashicorp.com/terraform/downloads)
    Update your local `kubeconfig` to interact with your new cluster using `kubectl`:
    ```bash
    aws eks update-kubeconfig --region us-east-1 --name book-bazaar-cluster
+   ```
+
+## Application Deployment (Helm)
+
+The `book-bazaar-chart/` directory contains a Helm chart to deploy the Django application to your EKS cluster. It seamlessly integrates with the AWS resources created by Terraform.
+
+### Chart Components:
+- **Deployment**: Runs your Django application (default 2 replicas).
+- **ServiceAccount**: Configured to match the `book-store-sa` IRSA role for passwordless S3 access.
+- **Secret**: Securely passes your database credentials and AWS configuration to the pods as environment variables using base64 encoding.
+- **Service**: A `LoadBalancer` service exposing your application on port 80 to the internet.
+
+### How to Deploy
+
+Ensure your `kubeconfig` is pointing to your EKS cluster (Step 6 of Terraform deployment).
+
+1. **Build and Push your Docker Image:**
+   You need to build the Docker image and push it to your AWS ECR repository.
+   ```bash
+   # Login to ECR
+   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin YOUR_AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+   
+   # Build and push
+   docker build -t book-bazaar .
+   docker tag book-bazaar:latest YOUR_AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/book-bazaar:latest
+   docker push YOUR_AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/book-bazaar:latest
+   ```
+
+2. **Update `values.yaml`:**
+   Open `book-bazaar-chart/values.yaml` and update the `env:` and `image:` sections with the outputs from Terraform and your ECR registry:
+   ```yaml
+   image:
+     repository: "YOUR_AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/book-bazaar"
+
+   serviceAccount:
+     annotations:
+       eks.amazonaws.com/role-arn: "YOUR_IRSA_ROLE_ARN"
+
+   env:
+     dbPassword: "BookBazaarSecurePass123!"
+     dbHost: "YOUR_DB_ENDPOINT"
+     awsStorageBucketName: "YOUR_S3_BUCKET_NAME"
+     cloudfrontDomain: "YOUR_CLOUDFRONT_DOMAIN"
+   ```
+
+3. **Install the Helm Chart:**
+   Navigate back to the root directory and run:
+   ```bash
+   helm install book-bazaar ./book-bazaar-chart
+   ```
+
+4. **Verify Deployment & Get URL:**
+   ```bash
+   # Check if pods are running
+   kubectl get pods
+   
+   # Get the LoadBalancer URL to access the application
+   kubectl get svc book-bazaar
    ```

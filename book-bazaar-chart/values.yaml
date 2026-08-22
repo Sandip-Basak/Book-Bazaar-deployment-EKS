@@ -1,0 +1,47 @@
+replicaCount: 2
+
+image:
+  repository: "YOUR_ECR_REGISTRY/book-bazaar"
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: "YOUR_IRSA_ROLE_ARN"
+  name: "book-store-sa"
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+env:
+  dbName: "online_store"
+  dbUser: "admin"
+  dbPassword: "YOUR_DB_PASSWORD"
+  dbHost: "YOUR_DB_ENDPOINT"
+  dbPort: "3306"
+  awsStorageBucketName: "YOUR_S3_BUCKET_NAME"
+  awsRegion: "us-east-1"
+  cloudfrontDomain: "YOUR_CLOUDFRONT_DOMAIN"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
