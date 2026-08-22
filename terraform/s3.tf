@@ -9,8 +9,8 @@ module "s3_bucket" {
   version = "~> 4.0"
 
   bucket = "${var.project_name}-media-${random_string.s3_suffix.result}"
-  acl    = "private"
-
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerEnforced"
   # Block public access as access will be via IRSA / Presigned URLs / IAM
   block_public_acls       = true
   block_public_policy     = true

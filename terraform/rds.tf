@@ -45,6 +45,7 @@ module "db" {
 
   vpc_security_group_ids = [module.db_security_group.security_group_id]
   subnet_ids             = module.vpc.private_subnets
+  create_db_subnet_group = true
 
   # Disable backups and deletion protection for simple testing/dev setup
   backup_retention_period = 0
