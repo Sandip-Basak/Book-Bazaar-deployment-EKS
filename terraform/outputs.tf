@@ -16,6 +16,7 @@ output "rds_endpoint" {
 output "rds_username" {
   description = "RDS master username"
   value       = module.db.db_instance_username
+  sensitive = true
 }
 
 output "rds_password" {
