@@ -1,9 +1,3 @@
-resource "random_password" "db_password" {
-  length           = 16
-  special          = true
-  override_special = "!#$%&*()-_=+[]{}<>:?"
-}
-
 module "db_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
@@ -40,7 +34,7 @@ module "db" {
 
   db_name                     = "online_store"
   username                    = "admin"
-  password                    = random_password.db_password.result
+  password                    = "BookBazaarSecurePass123!"
   manage_master_user_password = false
 
   vpc_security_group_ids = [module.db_security_group.security_group_id]

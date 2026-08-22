@@ -13,18 +13,6 @@ output "rds_endpoint" {
   value       = module.db.db_instance_endpoint
 }
 
-output "rds_username" {
-  description = "RDS master username"
-  value       = module.db.db_instance_username
-  sensitive = true
-}
-
-output "rds_password" {
-  description = "RDS master password"
-  value       = random_password.db_password.result
-  sensitive   = true
-}
-
 output "s3_bucket_name" {
   description = "Name of the S3 bucket"
   value       = module.s3_bucket.s3_bucket_id
