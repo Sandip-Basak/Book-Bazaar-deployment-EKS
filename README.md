@@ -172,3 +172,74 @@ Ensure your `kubeconfig` is pointing to your EKS cluster (Step 6 of Terraform de
    # Get the LoadBalancer URL to access the application
    kubectl get svc book-bazaar
    ```
+
+## Operational Commands (Kubernetes)
+
+Once your application is deployed to EKS, you may need to perform some operational tasks.
+
+### Running Database Migrations
+When deploying for the first time (or after changing your Django models), you must run migrations to set up the database tables in RDS:
+```bash
+kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name=book-bazaar -o jsonpath='{.items[0].metadata.name}') -- python manage.py migrate
+```
+
+### Uploading Static Files (CSS/JS) to S3
+When you deploy the application, you need to collect and upload Django's static files (including the admin panel styles) to your S3 bucket. Run this command to automatically upload them:
+```bash
+kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name=book-bazaar -o jsonpath='{.items[0].metadata.name}') -- python manage.py collectstatic --noinput
+```
+
+### Creating an Admin Superuser (Interactive)
+To access the Django admin panel, you need an admin account. You can create a superuser interactively by running:
+```bash
+kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name=book-bazaar -o jsonpath='{.items[0].metadata.name}') -- python manage.py createsuperuser
+```
+*Note: The `-it` flags are required here because `createsuperuser` prompts you for input (username, email, password).*
+
+### Running Arbitrary Commands (Bash Shell)
+If you ever need to inspect the container from the inside, you can open an interactive bash shell in the running pod:
+```bash
+kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name=book-bazaar -o jsonpath='{.items[0].metadata.name}') -- /bin/bash
+```
+
+### Viewing Application Logs
+If you need to debug errors (like a 500 Internal Server Error) or view standard output, you can stream logs from your pods:
+```bash
+kubectl logs -l app.kubernetes.io/name=book-bazaar
+```
+
+### Restarting the Application
+If you pushed a new Docker image with the `latest` tag and need to force the cluster to pull it and restart the pods:
+```bash
+kubectl rollout restart deployment book-bazaar
+```
+
+### Upgrading the Helm Chart
+If you made changes to `values.yaml` or any template files in the `book-bazaar-chart/` directory, apply the changes without downtime:
+```bash
+helm upgrade book-bazaar ./book-bazaar-chart
+```
+
+## Clean Up / Teardown (Avoid AWS Charges!)
+
+To destroy all the infrastructure and avoid ongoing AWS charges, you must follow these steps in exact order. 
+
+**1. Delete the Kubernetes Application & Load Balancer**
+Because the Load Balancer was created by Kubernetes (not Terraform directly), you must delete the Helm chart first so Kubernetes can clean it up:
+```bash
+helm uninstall book-bazaar
+```
+
+**2. Empty the S3 Bucket**
+Terraform cannot delete an S3 bucket if it still contains files. You must empty it using the AWS CLI (replace the bucket name with your actual bucket name):
+```bash
+aws s3 rm s3://YOUR_S3_BUCKET_NAME --recursive
+```
+
+**3. Destroy the Infrastructure**
+Finally, navigate to the `terraform` directory and destroy all resources (VPC, EKS, RDS, S3, CloudFront):
+```bash
+cd terraform
+terraform destroy
+```
+*Type `yes` when prompted to confirm. This will take about 15 minutes to fully tear down.*
