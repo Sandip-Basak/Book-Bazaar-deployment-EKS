@@ -19,6 +19,11 @@ module "eks" {
 
       instance_types = ["t3.medium"]
       capacity_type  = "ON_DEMAND"
+
+      iam_role_additional_policies = {
+        AmazonEC2ContainerRegistryReadOnly = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        AmazonSSMManagedInstanceCore       = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      }
     }
   }
 
