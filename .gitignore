@@ -51,6 +51,7 @@ terraform.rc
 charts/
 *.tgz
 .helm/
+book-bazaar-chart/values.yaml
 
 # Operating Systems
 .DS_Store
